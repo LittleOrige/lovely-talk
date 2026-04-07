@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给你的一封信</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffe6ea 0%, #ffb6c9 100%);
+            min-height: 100vh;
+        }
+
+        /* 首页样式 */
+        #homepage {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe6ea 0%, #ffb6c9 100%);
+            position: relative;
+            z-index: 10;
+        }
+
+        .envelope {
+            background: white;
+            padding: 50px 80px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+            max-width: 90%;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .envelope h1 {
+            color: #ff69b4;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .envelope p {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .open-btn {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .open-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 105, 180, 0.6);
+        }
+
+        /* 爱心动画页面 */
+        #hearts-page {
+            display: none;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe6ea 0%, #ffb6c9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
+            font-size: 1.5em;
+            color: #ff69b4;
+            max-width: 80%;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 爱心样式 */
+        .heart {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 30px;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100vh) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(110vh) rotate(720deg);
+            }
+        }
+
+        /* 小爱心背景 */
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 105, 180, 0.3);
+            animation: floatHeart 8s ease-in-out infinite;
+        }
+
+        @keyframes floatHeart {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .envelope {
+                padding: 40px 50px;
+            }
+
+            .envelope h1 {
+                font-size: 2em;
+            }
+
+            .message {
+                font-size: 1.2em;
+                padding: 20px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 首页 -->
+    <div id="homepage">
+        <div class="envelope">
+            <h1>✨ 给亲爱的你 ✨</h1>
+            <p>这里有一封给你的特别信件</p>
+            <p style="font-size: 0.9em; color: #ff69b4;">(点开有惊喜哦~)</p>
+            <button class="open-btn" onclick="openLetter()">💖 点击查看 💖</button>
+        </div>
+    </div>
+
+    <!-- 爱心动画页面 -->
+    <div id="hearts-page">
+        <div class="message-container">
+            <div class="message" id="mainMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        // 温馨的话语
+        const messages = [
+            "❤️ 你是我最爱的人 ❤️",
+            "💕 每天都想你 💕",
+            "💖 你是世界上最好的 💖",
+            "🌹 有你真好 🌹",
+            "💗 想把所有美好都给你 💗",
+            "💝 你是我的小幸运 💝",
+            "🌸 你是我遇见最美的风景 🌸",
+            "💞 爱你如初 💞",
+            "✨ 你是我的光 ✨",
+            "💓 你的笑容治愈一切 💓",
+            "🌟 想陪你走过每一段路 🌟",
+            "💘 你是我最珍贵的宝藏 💘"
+        ];
+
+        let messageIndex = 0;
+        let heartInterval;
+
+        // 打开信件
+        function openLetter() {
+            document.getElementById('homepage').style.display = 'none';
+            document.getElementById('hearts-page').style.display = 'block';
+
+            // 开始显示消息
+            showMessages();
+            // 开始爱心动画
+            startHeartRain();
+        }
+
+        // 显示消息
+        function showMessages() {
+            const messageEl = document.getElementById('mainMessage');
+            messageEl.textContent = messages[messageIndex];
+
+            setInterval(() => {
+                messageIndex = (messageIndex + 1) % messages.length;
+                messageEl.style.opacity = '0';
+                setTimeout(() => {
+                    messageEl.textContent = messages[messageIndex];
+                    messageEl.style.opacity = '1';
+                }, 500);
+            }, 3000);
+        }
+
+        // 创建爱心
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = ['❤️', '💖', '💕', '💗', '💝', '💞', '💘', '💓'][Math.floor(Math.random() * 8)];
+
+            // 随机位置和大小
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+
+            document.getElementById('hearts-page').appendChild(heart);
+
+            // 动画结束后移除元素
+            setTimeout(() => {
+                heart.remove();
+            }, 7000);
+        }
+
+        // 开始爱心雨
+        function startHeartRain() {
+            // 每隔一段时间创建多个爱心
+            setInterval(() => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(createHeart, i * 200);
+                }
+            }, 300);
+
+            // 添加背景爱心
+            addBackgroundHearts();
+        }
+
+        // 添加背景爱心
+        function addBackgroundHearts() {
+            const container = document.getElementById('hearts-page');
+            for (let i = 0; i < 20; i++) {
+                const bgHeart = document.createElement('div');
+                bgHeart.className = 'bg-heart';
+                bgHeart.innerHTML = ['❤️', '💖', '💕', '💗'][Math.floor(Math.random() * 4)];
+                bgHeart.style.left = Math.random() * 100 + 'vw';
+                bgHeart.style.top = Math.random() * 100 + 'vh';
+                bgHeart.style.fontSize = (Math.random() * 40 + 30) + 'px';
+                bgHeart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(bgHeart);
+            }
+        }
+    </script>
+</body>
+</html>
